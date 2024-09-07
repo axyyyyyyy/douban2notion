@@ -138,15 +138,24 @@ def insert_movie():
                     for x in subject.get("genres")
                 ]
             if subject.get("actors"):
-                l = []
-                actors = subject.get("actors")[0:100]
-                for actor in actors:
-                    if actor.get("name"):
-                        if "/" in actor.get("name"):
-                            l.extend(actor.get("name").split("/"))
-                        else:
-                            l.append(actor.get("name"))  
-                movie["演员"] = l
+                # l = []
+                # actors = subject.get("actors")[0:100]
+                # for actor in actors:
+                #     if actor.get("name"):
+                #         if "/" in actor.get("name"):
+                #             l.extend(actor.get("name").split("/"))
+                #         else:
+                #             l.append(actor.get("name"))  
+                # movie["演员"] = l
+                movie["演员"] = [
+                    notion_helper.get_relation_id(
+                        actor.get("name"),
+                        notion_helper.actor_database_id,
+                        USER_ICON_URL
+                    )
+                    for actor in subject.get("actors")[0:100]
+                    if not subject.get("card_subtitle") or actor.get("name") in subject.get("card_subtitle", "")
+                ]
             if subject.get("directors"):
                 movie["导演"] = [
                     notion_helper.get_relation_id(
